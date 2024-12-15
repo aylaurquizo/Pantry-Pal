@@ -7,7 +7,8 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-const USER_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const FULLNAME_REGEX = /^[a-zA-Z]{2,} [a-zA-Z]{2,}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 
@@ -15,9 +16,13 @@ const Register = () => {
     const userRef = useRef();
     const errRef = useRef();
 
-    const [user, setUser] = useState('');
-    const [validName, setValidName] = useState(false);
-    const [userFocus, setUserFocus] = useState(false);
+    const [fullName, setFullName] = useState('');
+    const [validFullName, setValidFullName] = useState(false);
+    const [fullNameFocus, setFullNameFocus] = useState(false);
+
+    const [email, setEmail] = useState('');
+    const [validEmail, setValidEmail] = useState(false);
+    const [emailFocus, setEmailFocus] = useState(false);
 
     const [pwd, setPwd] = useState('');
     const [validPwd, setValidPwd] = useState(false);
@@ -36,11 +41,18 @@ const Register = () => {
     }, [])
 
     useEffect(() => {
-        const result = USER_REGEX.test(user);
+        const result = FULLNAME_REGEX.test(fullName);
         console.log(result);
-        console.log(user);
-        setValidName(result);
-    }, [user]);
+        console.log(fullName);
+        setValidFullName(result);
+    }, [fullName]);
+
+    useEffect(() => {
+        const result = EMAIL_REGEX.test(email);
+        console.log(result);
+        console.log(email);
+        setValidEmail(result);
+    }, [email]);
 
     useEffect(() => {
         const result = PWD_REGEX.test(pwd);
@@ -53,15 +65,20 @@ const Register = () => {
 
     useEffect(() => {
         setErrMsg('');
-    }, [user, pwd, matchPwd]);
+    }, [email, pwd, matchPwd]);
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const { data, error } = await supabase.auth.signUp({
-                email: user,
+                email: email,
                 password: pwd,
+                options: {
+                    data: {
+                      display_name: fullName,
+                    }
+                  }
               })
 
               if (error) {
@@ -70,6 +87,11 @@ const Register = () => {
                 return;
             } else {
                 console.log("Authentication successful:", error);
+
+                const { errorr } = await supabase
+                .from('User')
+                .insert({ email: email, name: fullName })
+
                 setSuccess(true);
                 setErrMsg('');
                 navigate('/login');
@@ -88,12 +110,37 @@ const Register = () => {
         <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
         <h1>Register</h1>
         <form onSubmit={handleSubmit}>
-            <label htmlFor="username">
-                Email:
-                <span className={validName ? "valid" : "hide"}>
+            <label htmlFor="full_name">
+                Full Name:
+                <span className={validFullName ? "valid" : "hide"}>
                     <FontAwesomeIcon icon={faCheck} />
                 </span>
-                <span className={validName || !user ? "hide" : "invalid"}>
+                <span className={validFullName || !fullName ? "hide" : "invalid"}>
+                    <FontAwesomeIcon icon={faTimes} />
+                </span>
+            </label>
+            <input 
+                type="text" 
+                id="fullName" 
+                ref={userRef} 
+                autoComplete="off"
+                onChange={(e) => setFullName(e.target.value)} 
+                required 
+                aria-invalid={validFullName ? "false" : "true"} 
+                aria-describedby="uidnote" 
+                onFocus={() => setFullNameFocus(true)} 
+                onBlur={() => setFullNameFocus(false)} 
+            />
+            <p id="uidnote" className={fullNameFocus && fullName && !validFullName ? "instructions" : "offscreen"}>
+                <FontAwesomeIcon icon={faInfoCircle} />
+                Enter first and last name.
+            </p>
+            <label htmlFor="username">
+                Email:
+                <span className={validEmail ? "valid" : "hide"}>
+                    <FontAwesomeIcon icon={faCheck} />
+                </span>
+                <span className={validEmail || !email ? "hide" : "invalid"}>
                     <FontAwesomeIcon icon={faTimes} />
                 </span>
             </label>
@@ -102,14 +149,14 @@ const Register = () => {
                 id="username" 
                 ref={userRef} 
                 autoComplete="off"
-                onChange={(e) => setUser(e.target.value)} 
+                onChange={(e) => setEmail(e.target.value)} 
                 required 
-                aria-invalid={validName ? "false" : "true"} 
+                aria-invalid={validEmail ? "false" : "true"} 
                 aria-describedby="uidnote" 
-                onFocus={() => setUserFocus(true)} 
-                onBlur={() => setUserFocus(false)} 
+                onFocus={() => setEmailFocus(true)} 
+                onBlur={() => setEmailFocus(false)} 
             />
-            <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
+            <p id="uidnote" className={emailFocus && email && !validEmail ? "instructions" : "offscreen"}>
                 <FontAwesomeIcon icon={faInfoCircle} />
                 Enter valid email address.
             </p>
@@ -171,7 +218,7 @@ const Register = () => {
                 Must match the first password input field.
             </p>
 
-            <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
+            <button disabled={!validEmail || !validPwd || !validMatch ? true : false}>Sign Up</button>
         </form>
         <p>
             Already registered?<br />
