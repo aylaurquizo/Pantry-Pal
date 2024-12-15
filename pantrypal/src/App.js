@@ -8,6 +8,9 @@ import Search from "./components/Search";
 import styled from "styled-components";
 import ImageFile from "./components/Assets/logo.png";
 import { Link } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 function App() {
   // State to track if the user is signed in
@@ -15,7 +18,9 @@ function App() {
 
   return (
     <Router>
-      <Header>
+      {isSignedIn ? (
+        <div className="App">
+          <Header>
         {/* Logo and Title on the same line */}
         <Nav>
           <Logo to="/">
@@ -29,14 +34,32 @@ function App() {
           <Search />
         </SearchWrapper>
       </Header>
-      {isSignedIn ? (
-        <div className="App">
-          <h1>Welcome to PantryPal</h1>
+      <Sidebar />
+      <Pages />
+      {/*
+      <Container>
+      <Row>
+        <Col xs={2} id="sidebar-wrapper">
           <Sidebar />
-          <Pages />
+        </Col>
+        <Col xs={10} id="page-content-wrapper">
+        <Pages />
+        </Col>
+      </Row>   
+      </Container> */}
+              
         </div>
       ) : (
         <main className="App">
+          <Header>
+        {/* Logo and Title on the same line */}
+        <Nav>
+          <Logo to="/">
+            <StyledImage />
+          </Logo>
+          <Title>PantryPal</Title>
+        </Nav>
+      </Header>
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login setIsSignedIn={setIsSignedIn} />} />
@@ -54,7 +77,6 @@ const Header = styled.div`
   flex-direction: column;
   align-items: center; /* Centers the search bar */
   padding: 1rem 2rem;
-  background: rgb(250, 237, 205);
 `;
 
 // Styled component for the logo and title container
@@ -78,13 +100,14 @@ const StyledImage = styled.div`
 const Logo = styled(Link)`
   display: flex;
   text-decoration: none;
-  margin-right: 1rem; /* Adds spacing between the logo and the title */
+  margin: 1rem;
 `;
 
 // Styled component for the title
 const Title = styled.h1`
   font-size: 1.5rem;
   margin: 0;
+  justify-content: center;
 `;
 
 // Wrapper for the search bar
@@ -93,5 +116,7 @@ const SearchWrapper = styled.div`
   display: flex;
   justify-content: center; /* Centers the search bar */
 `;
+
+
 
 export default App;

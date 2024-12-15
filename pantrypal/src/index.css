@@ -21,40 +21,41 @@ body {
   font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin: 0% 5%;
-  background: rgb(250, 237, 205);
+  background: rgb(255, 237, 200);
+  overflow: auto;
 }
 
 .Trending {
   width: 80%;
-  margin: 1rem;
-  padding: 0 2rem;
-  background-color: rgbßa(255, 255, 255, 0.8);
+  margin: 0;
+  padding: 0;
+  padding-left: 5rem;
+  padding-right: 0;
   border-radius: 0.5rem;
-  color: #000;
+  color: rgba(109, 80, 53);
   overflow: visible; 
   height: auto; 
 }
 
 h1 {
   font-size: 1.8rem;
-  color: rgb(33, 32, 32);
+  color: rgba(109, 80, 53);
   margin-bottom: 0.5rem;
 }
 
 h2 {
   font-size: 1.8rem;
-  color: rgb(33, 32, 32);
+  color: rgba(109, 80, 53);
   margin-bottom: 0.5rem;
 }
 
 h4{
   font-size: 1rem;
-  color: rgb(33, 32, 32);
+  color: rgba(109, 80, 53);
 }
 h3{
   font-size: 1.5rem;
-  color: rgb(33, 32, 32);
+  color: rgba(109, 80, 53);
   line-height: 2.5rem;
   margin: 2rem 0rem;
 }
@@ -63,11 +64,11 @@ h3{
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  padding: 1rem 0.5rem;
-  overflow: visible; 
+  min-height: 100vh; /* Full height of the viewport */
+  width: 100%; /* Full width */
+  margin: 0;
+  overflow: none; 
 }
-
 
 section {
   margin: 70px 100px;
@@ -78,7 +79,7 @@ section {
   flex-direction: column;
   justify-content: flex-start;
   padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(109, 80, 53, 0.4);
   overflow: visible; 
 }
 
@@ -89,6 +90,7 @@ section {
   justify-content: space-evenly;
   flex-grow: 1;
   padding-bottom: 1rem;
+  color: rgba(109, 80, 53);
 }
 
 .search-form {
@@ -103,9 +105,9 @@ section {
 
 .search-form input {
   border: none;
-  background: rgba(138, 123, 110);
+  background: rgba(255, 251, 228);
   font-size: 1.5rem;
-  color: white;
+  color: rgba(109, 80, 53);
   padding: 1rem 3rem;
   border-radius: 1rem;
   outline: none;
@@ -128,7 +130,7 @@ input[type="text"],
 input[type="password"],
 button,
 textarea {
-font-family: 'Nunito', sans-serif;
+font-family: 'Montserrat', sans-serif;
 font-size: 22px;
 padding: 0.25rem;
 border-radius: 0.5rem;
@@ -186,4 +188,16 @@ padding: 0.5rem;
 
 .line {
   display: inline-block;
+  color: rgba(109, 80, 53);
 }
+
+.sidebar {
+  position: fixed;
+  top: 12rem;
+  bottom: 0;
+  left: 2rem;
+  z-index: 100;
+  padding: 7px 0 0;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+

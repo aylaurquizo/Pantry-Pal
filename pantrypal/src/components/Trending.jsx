@@ -33,7 +33,7 @@ function Trending() {
       <Wrapper>
         <Splide
           options={{
-            perPage: 4, 
+            perPage: 3, 
             gap: '2rem', 
             arrows: false, 
             pagination: false, 
@@ -61,21 +61,20 @@ function Trending() {
 }
 
 const Wrapper = styled.div`
-  margin: 4rem 0rem;
+  margin: 2rem 0rem;
 `;
 
 const Card = styled.div`
-  height: 25rem; /* Explicit height for the card */
+  height: 15rem; 
   border-radius: 2rem;
   overflow: hidden;
   display: flex;
   flex-direction: column; /* Stack image and text vertically */
-  background-color: #f9f9f9; /* Optional background color for card */
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Optional shadow for better aesthetics */
 
   img {
     width: 100%;
-    height: 80%; /* Ensure it takes exactly 70% of the card height */
+    height: 10rem;
     object-fit: cover;
     border-top-left-radius: 2rem;
     border-top-right-radius: 2rem;
@@ -83,20 +82,22 @@ const Card = styled.div`
 
   p {
     width: 100%;
-    height: 20%; /* Ensure it takes exactly 30% of the card height */
-    background-color: rgba(138, 123, 110); /* Semi-transparent background */
-    color: white;
+    height: 5rem; 
+    background-color: rgb(249, 244, 233);
+    color: rgba(109, 80, 53);
     text-align: center;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0; /* Remove any default margins */
-    padding: 0; /* Remove any default padding */
     border-bottom-left-radius: 2rem;
     border-bottom-right-radius: 2rem;
-    font-family: 'Montserrat', sans-serif; /* Apply the font here */
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  a {
+    text-decoration: none; 
   }
 `;
 

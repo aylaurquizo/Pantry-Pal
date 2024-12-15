@@ -32,9 +32,9 @@ const FormStyle = styled.form`
     }
     input {
         border: none;
-        background: rgba(138, 123, 110);
+        background: rgb(249, 244, 233);
         font-size: 1.5rem;
-        color: white;
+        color: rgba(109, 80, 53);
         padding: 1rem 3rem;
         border-radius: 1rem;
         outline: none;
@@ -45,7 +45,7 @@ const FormStyle = styled.form`
         top: 50%;
         left: 0%;
         transform: translate(100%, -50%);
-        color: white;
+        color: rgba(109, 80, 53);
     }
 `
 
