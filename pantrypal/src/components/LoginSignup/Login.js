@@ -61,7 +61,7 @@ const Login = ({ setIsSignedIn }) => {
         {errMsg}
       </p>
       <h1>Sign In</h1>
-      <form onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
         <input
           type="text"

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/splide/css';
+import {Link} from 'react-router-dom';
 
 function Trending() {
   const [trending, setTrending] = useState([]);
@@ -42,11 +43,13 @@ function Trending() {
           {trending.map((recipe, index) => (
             <SplideSlide key={recipe.id}>
               <Card>
-                <img
-                  src={recipe.image}
-                  alt={recipe.title}
-                />
-                <p>{recipe.title}</p>
+                <Link to={'/recipe/' + recipe.id}>
+                  <img
+                    src={recipe.image}
+                    alt={recipe.title}
+                  />
+                  <p>{recipe.title}</p>
+                </Link>
               </Card>
               
             </SplideSlide>

@@ -109,7 +109,7 @@ const Register = () => {
     <section>
         <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
         <h1>Register</h1>
-        <form onSubmit={handleSubmit}>
+        <form className="login-form" onSubmit={handleSubmit}>
             <label htmlFor="full_name">
                 Full Name:
                 <span className={validFullName ? "valid" : "hide"}>
