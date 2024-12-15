@@ -1,0 +1,162 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+html {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  color: #fff;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0% 5%;
+  background: rgb(250, 237, 205);
+}
+
+.Trending {
+  width: 80%;
+  margin: 1rem;
+  padding: 0 2rem;
+  background-color: rgbßa(255, 255, 255, 0.8);
+  border-radius: 0.5rem;
+  color: #000;
+  overflow: visible; 
+  height: auto; 
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: rgb(33, 32, 32);
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: rgb(33, 32, 32);
+  margin-bottom: 0.5rem;
+}
+
+h4{
+  font-size: 1rem;
+  color: rgb(33, 32, 32);
+}
+h3{
+  font-size: 1.5rem;
+  color: rgb(33, 32, 32);
+  line-height: 2.5rem;
+  margin: 2rem 0rem;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem 0.5rem;
+  overflow: visible; 
+}
+
+
+section {
+  margin: 70px 100px;
+  width: 100%;
+  max-width: 420px;
+  height: Auto; 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  overflow: visible; 
+}
+
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex-grow: 1;
+  padding-bottom: 1rem;
+}
+
+a, a:visited {
+  color: rgb(33, 32, 32);
+}
+
+input[type="text"],
+input[type="password"],
+button,
+textarea {
+font-family: 'Nunito', sans-serif;
+font-size: 22px;
+padding: 0.25rem;
+border-radius: 0.5rem;
+}
+
+label,
+button {
+margin-top: 1rem;
+}
+
+button {
+padding: 0.5rem;
+}
+
+.instructions {
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  background: #000;
+  color: #fff;
+  padding: 0.25rem;
+  position: relative;
+  bottom: -10px;
+}
+
+.instructions > svg {
+  margin-right: 0.25rem;
+}
+
+.offscreen {
+  position: absolute;
+  left: -9999px;
+}
+
+.hide {
+  display: none;
+}
+
+.valid {
+  color: limegreen;
+  margin-left: 0.25rem;
+}
+
+.invalid {
+  color: red;
+  margin-left: 0.25rem;
+}
+
+.errmsg {
+  background-color: lightpink;
+  color: firebrick;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  display: inline-block;
+}
+
+
