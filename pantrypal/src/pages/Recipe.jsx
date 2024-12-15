@@ -45,13 +45,13 @@ function Recipe() {
           </Button>
           {activeTab === 'instructions' && (
               <div>
-                <h3 dangerouslySetInnerHTML={{__html: details.summary}}></h3>
-                <h3 dangerouslySetInnerHTML={{__html: details.instructions}}></h3>
+                <h3 className="recipe-info" dangerouslySetInnerHTML={{__html: details.summary}}></h3>
+                <h3 className="recipe-info" dangerouslySetInnerHTML={{__html: details.instructions}}></h3>
             </div>
           )}
           {activeTab === 'ingredients' && (
             <ul>
-            {details.extendedIngredients.map((ingredient) => <li key={ingredient.id}>{ingredient.original}</li>)}
+            {details.extendedIngredients.map((ingredient) => <li className='ingredients-tab' key={ingredient.id}>{ingredient.original}</li>)}
           </ul>
           )}
         </Info>
@@ -64,32 +64,43 @@ const DetailWrapper = styled.div`
   margin-bottom: 5rem;
   display: flex;
   .active {
-    background: rgba(138, 123, 110);
+    background: rgba(109, 80, 53, 0.5);
     color: white;
   }
   h2 {
+    margin-top: 0.7rem;
+    margin-left: 10rem;
     margin-bottom: 2rem;
+    font-size: 1rem;
   }
   li {
-    font-size: 1.2rem;
-    line-height: 2.5rem;
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(109, 80, 53);
+    margin-right: 2rem;
+    font-size: 0.5rem;
+    line-height: 1rem;
   }
   ul {
     margin-top: 2rem;
   }
+  img {
+    margin-left: 10rem;
+    height: 17rem;
+    width: 19rem;
+  }
 `;
 
 const Button = styled.button`
-  padding: 1rem 2rem;
-  color: rgba(138, 123, 110);
+  padding: 1rem 1rem;
+  color: rgba(109, 80, 53);
   background: white;
-  border: 2px solid black;
+  border: 2px solid rgba(109, 80, 53);;
   margin-right: 2rem;
   font-weight: 600;
 `;
 
 const Info = styled.div`
-  margin-left: 10rem;
+  margin-left: 5rem;
 `
 
 export default Recipe;

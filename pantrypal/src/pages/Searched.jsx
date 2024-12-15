@@ -60,22 +60,45 @@ function Searched() {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  grid-template-columns: repeat(3, minmax(8rem, 1fr));
   grid-gap: 2rem;
+  padding-left: 9rem;
+  padding-right: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr; /* 1 column for small screens */
+  }
 `;
 
+
 const Card = styled.div`
+  overflow: hidden; /* Ensures child elements respect the parent border radius */
+  border-radius: 1rem; /* Apply border-radius to the entire card */
+
   img {
     width: 100%;
-    border-radius: 2rem;
+    height: auto; /* Ensure the image maintains its aspect ratio */
+    border-top-left-radius: 1rem; /* Correct CSS property */
+    border-top-right-radius: 1rem; /* Correct CSS property */
   }
+
   a {
     text-decoration: none;
   }
+
   h4 {
+    font-size: 1rem; /* Smaller font size for the title */
     text-align: center;
-    padding: 0.5rem;
+    padding: 1rem; /* Less padding for the text */
+    background-color: rgb(249, 244, 233);;
+    border-bottom-left-radius: 1rem; /* Correct CSS property */
+    border-bottom-right-radius: 1rem; /* Correct CSS property */
   }
 `;
+
 
 export default Searched;
