@@ -34,7 +34,9 @@ function App() {
           <Search />
         </SearchWrapper>
       </div>
+      <SidebarWrapper>
       <Sidebar />
+      </SidebarWrapper>
       <Pages />
         </div>
       ) : (
@@ -93,6 +95,12 @@ const Title = styled.h1`
 // Wrapper for the search bar
 const SearchWrapper = styled.div`
   width: 100%; /* Ensures the search bar spans the width */
+  display: flex;
+  justify-content: center; /* Centers the search bar */
+`;
+
+// Wrapper for the search bar
+const SidebarWrapper = styled.div`
   display: flex;
   justify-content: center; /* Centers the search bar */
 `;

@@ -61,11 +61,6 @@ body {
   }
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-}
-
 h1 {
   font-size: clamp(1.5rem, 2.5vw, 2rem);
   color: var(--text-color);
@@ -282,11 +277,11 @@ padding: 0.5rem;
 
 .sidebar {
   position: fixed;
-  top: 12rem;
   left: 2rem;
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
   display: flex;
   flex-direction: column;
+  align-items: center;
   margin: 0rem 0rem;
   background-color: rgb(249, 244, 233);
   border-radius: 1rem;
