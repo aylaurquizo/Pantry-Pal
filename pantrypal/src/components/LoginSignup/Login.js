@@ -51,8 +51,8 @@ const Login = ({ setIsSignedIn }) => {
 
   return (
     <div>
-      <h1>Welcome back to PantryPal!</h1>
-    <section>
+      <h1 className='welcome'>Welcome back to PantryPal!</h1>
+    <section className='login-section'>
       <p
         ref={errRef}
         className={errMsg ? "errmsg" : "offscreen"}
@@ -60,7 +60,7 @@ const Login = ({ setIsSignedIn }) => {
       >
         {errMsg}
       </p>
-      <h1>Sign In</h1>
+      <h1 className='signin'>Sign In</h1>
       <form className="login-form" onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
         <input

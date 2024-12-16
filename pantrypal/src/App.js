@@ -20,7 +20,7 @@ function App() {
     <Router>
       {isSignedIn ? (
         <div className="App">
-          <Header>
+          <div className="headersearchbar">
         {/* Logo and Title on the same line */}
         <Nav>
           <Logo to="/">
@@ -33,25 +33,13 @@ function App() {
         <SearchWrapper>
           <Search />
         </SearchWrapper>
-      </Header>
+      </div>
       <Sidebar />
       <Pages />
-      {/*
-      <Container>
-      <Row>
-        <Col xs={2} id="sidebar-wrapper">
-          <Sidebar />
-        </Col>
-        <Col xs={10} id="page-content-wrapper">
-        <Pages />
-        </Col>
-      </Row>   
-      </Container> */}
-              
         </div>
       ) : (
         <main className="App">
-          <Header>
+          <div className="header">
         {/* Logo and Title on the same line */}
         <Nav>
           <Logo to="/">
@@ -59,7 +47,7 @@ function App() {
           </Logo>
           <Title>PantryPal</Title>
         </Nav>
-      </Header>
+      </div>
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login setIsSignedIn={setIsSignedIn} />} />
@@ -71,18 +59,10 @@ function App() {
   );
 }
 
-// Styled component for the header section
-const Header = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centers the search bar */
-  padding: 1rem 2rem;
-`;
-
 // Styled component for the logo and title container
 const Nav = styled.div`
   display: flex;
-  align-items: center; /* Aligns logo and title horizontally */
+  align-items: flex-start; /* Aligns logo and title horizontally */
   justify-content: center; /* Centers the logo and title */
   width: 100%;
   margin-bottom: 1rem; /* Adds spacing between Nav and Search */
@@ -100,14 +80,14 @@ const StyledImage = styled.div`
 const Logo = styled(Link)`
   display: flex;
   text-decoration: none;
-  margin: 1rem;
+  margin-right: 0.7rem;
 `;
 
 // Styled component for the title
 const Title = styled.h1`
   font-size: 1.5rem;
   margin: 0;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
 // Wrapper for the search bar

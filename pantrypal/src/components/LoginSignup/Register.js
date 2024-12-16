@@ -65,7 +65,7 @@ const Register = () => {
 
     useEffect(() => {
         setErrMsg('');
-    }, [email, pwd, matchPwd]);
+    }, [fullName, email, pwd, matchPwd]);
 
 
     const handleSubmit = async (e) => {
@@ -105,11 +105,12 @@ const Register = () => {
     }    
   return (
     <div>
-        <h1>Welcome to PantryPal!</h1>
-    <section>
+        <h1 className='welcome'>Welcome to PantryPal!</h1>
+    <section className='register-section'>
+        <h1 className='signin'>Register</h1>
         <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-        <h1>Register</h1>
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="register-form" onSubmit={handleSubmit}>
+         <div className="input-container">
             <label htmlFor="full_name">
                 Full Name:
                 <span className={validFullName ? "valid" : "hide"}>
@@ -132,9 +133,12 @@ const Register = () => {
                 onBlur={() => setFullNameFocus(false)} 
             />
             <p id="uidnote" className={fullNameFocus && fullName && !validFullName ? "instructions" : "offscreen"}>
-                <FontAwesomeIcon icon={faInfoCircle} />
+                <FontAwesomeIcon icon={faInfoCircle} className="icon-space"/>
                 Enter first and last name.
             </p>
+            </div>
+
+            <div className="input-container">
             <label htmlFor="username">
                 Email:
                 <span className={validEmail ? "valid" : "hide"}>
@@ -157,10 +161,12 @@ const Register = () => {
                 onBlur={() => setEmailFocus(false)} 
             />
             <p id="uidnote" className={emailFocus && email && !validEmail ? "instructions" : "offscreen"}>
-                <FontAwesomeIcon icon={faInfoCircle} />
+                <FontAwesomeIcon icon={faInfoCircle} className="icon-space"/>
                 Enter valid email address.
             </p>
+            </div>
 
+            <div className="input-container">
             <label htmlFor="password">
                 Password:
                 <span className={validPwd ? "valid" : "hide"}>
@@ -182,7 +188,7 @@ const Register = () => {
                 onBlur={() => setPwdFocus(false)}
             />
             <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
-                <FontAwesomeIcon icon={faInfoCircle} />
+                <FontAwesomeIcon icon={faInfoCircle} className="icon-space"/>
                 8 to 24 characters.<br />
                 Must include uppercase and lowercase letters, a number and a special character.<br />
                 Allowed special characters: 
@@ -192,7 +198,9 @@ const Register = () => {
                 <span aria-label="dollar sign">$</span> 
                 <span aria-label="percent">%</span>
             </p>
+            </div>
 
+            <div className="input-container">
             <label htmlFor="confirm_pwd">
                 Confirm Password:
                 <span className={validMatch && matchPwd ? "valid" : "hide"}>
@@ -214,10 +222,10 @@ const Register = () => {
                 onBlur={() => setMatchFocus(false)}
             />
             <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                <FontAwesomeIcon icon={faInfoCircle} />
+                <FontAwesomeIcon icon={faInfoCircle} className="icon-space"/>
                 Must match the first password input field.
             </p>
-
+            </div>
             <button disabled={!validEmail || !validPwd || !validMatch ? true : false}>Sign Up</button>
         </form>
         <p>

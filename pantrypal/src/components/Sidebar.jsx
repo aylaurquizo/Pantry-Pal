@@ -5,35 +5,19 @@ import { NavLink } from 'react-router-dom';
 
 function Sidebar() {
   return (
-    <List className='sidebar'>
+    <div className='sidebar'>
       <NavLink to={'/'}>
-        <FaHome/>
+        <FaHome className="sidebarsvg"/>
       </NavLink>
       <NavLink to={'/profile'}>
-        <FaUser/>
+        <FaUser className="sidebarsvg"/>
       </NavLink>
       <NavLink to={'/favorites'}>
-        <FaBookmark/>
+        <FaBookmark className="sidebarsvg"/>
       </NavLink>
-    </List>
+    </div>
   )
 }
-
-const List = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin: 0rem 0rem;
-    background-color: rgb(249, 244, 233);
-    height: 40%;
-    border-radius: 1rem;
-
-    svg {
-      height: 2rem;
-      width: 2rem;
-      margin: 1.5rem;
-      color: rgba(109, 80, 53);;
-    }
-`;
 
 
 export default Sidebar
