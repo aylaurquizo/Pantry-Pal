@@ -7,7 +7,7 @@ function Profile() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserName = async () => {
       try {
         // Get the authenticated user
         const {
@@ -38,7 +38,7 @@ function Profile() {
       }
     };
 
-    fetchUserData();
+    fetchUserName();
   }, []);
 
   if (loading) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 
 function Recipe() {
   let params = useParams();
@@ -24,6 +25,50 @@ function Recipe() {
     }
   };
 
+  const addToFavorites = async () => {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error('Unable to fetch user:', userError.message);
+        return;
+      }
+
+      const userId = user.id;
+
+      console.log("Here is the users id:", userId);
+
+          // Log the data being added
+    console.log("Adding new row to favorited_recipe:", {
+      user_id: userId,
+      recipe_name: details.title,
+      description: details.summary,
+    });
+
+    // Insert the new row into the table
+    const { error: dbError } = await supabase
+      .from('favorited_recipe')
+      .insert([ // Insert expects an array of rows
+        {
+          user_id: userId,
+          recipe_name: details.title,
+          description: details.summary,
+        },
+      ]);
+      if (dbError) {
+        console.error("Error adding to favorites:", dbError.message);
+        return;
+      }
+
+      alert('Recipe added to favorites!');
+    } catch (error) {
+      console.error("Unexpected error adding to favorites:", error);
+    }
+  };
+
   useEffect(() => {
     fetchDetails();
   }, [params.name]);
@@ -37,6 +82,9 @@ function Recipe() {
           </h2>
           <img src={details.image} alt="" />
         </div>
+        <Button className="addToFavorite" onClick={addToFavorites}>
+          Add to Saved Recipes
+        </Button>
         <Info>
           <Button className={activeTab === 'instructions' ? 'active' : ''} onClick={() => setActiveTab('instructions')}>
             Instructions

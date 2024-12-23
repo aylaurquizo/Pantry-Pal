@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import { faCheck, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { supabase } from '../../supabaseClient';
-import bcrypt from 'bcryptjs';
 import React from 'react'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -71,38 +70,51 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Step 1: Sign up the user and get their UUID
             const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: pwd,
                 options: {
                     data: {
-                      display_name: fullName,
-                    }
-                  }
-              })
-
-              if (error) {
+                        display_name: fullName,
+                    },
+                },
+            });
+    
+            if (error) {
                 console.error("Authentication Error:", error.message);
                 setErrMsg(error.message);
                 return;
-            } else {
-                console.log("Authentication successful:", error);
-
-                const { errorr } = await supabase
-                .from('User')
-                .insert({ email: email, name: fullName })
-
-                setSuccess(true);
-                setErrMsg('');
-                navigate('/login');
             }
-            
+    
+            // Extract the user ID (UUID)
+            const userId = data.user?.id;
+    
+            if (!userId) {
+                console.error("User ID not found in response.");
+                setErrMsg("Failed to retrieve user ID.");
+                return;
+            }
+    
+            // Step 2: Insert the user's details into the 'User' table
+            const { error: dbError } = await supabase
+                .from('User')
+                .insert({ id: userId, email: email, name: fullName });
+    
+            if (dbError) {
+                console.error("Database Error:", dbError.message);
+                setErrMsg(dbError.message);
+                return;
+            }
+    
+            setSuccess(true);
+            setErrMsg('');
+            navigate('/login');
         } catch (error) {
             console.error("Error during registration:", error);
             setErrMsg("An error occurred during registration");
         }
-
-    }    
+    };    
   return (
     <div>
         <h1 className='welcome'>Welcome to PantryPal!</h1>
