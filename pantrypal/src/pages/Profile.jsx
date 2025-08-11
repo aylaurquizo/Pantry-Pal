@@ -23,7 +23,7 @@ function Profile() {
         const { data, error: fetchError } = await supabase
           .from('User')
           .select('name')
-          .eq('email', user.email)
+          .eq('id', user.id)
           .single(); 
 
         if (fetchError) {

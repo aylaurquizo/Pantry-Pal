@@ -9,68 +9,48 @@ function Favorites() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchFavoritesWithImages = async () => {
+    const fetchAllFavorites = async () => {
       try {
-        // Get the authenticated user's session
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('You must be logged in to see favorites.');
 
-        if (sessionError || !session || !session.user) {
-          setError('Unable to fetch user session');
-          return;
-        }
-
-        const user = session.user;
-
-        // Fetch user's favorite recipes from the database
-        let { data: favorites, error: fetchError } = await supabase
+        // Fetch the list of saved recipe IDs from your corrected table
+        const { data: favoriteIds, error: fetchError } = await supabase
           .from('favorited_recipe')
-          .select('recipe_name') // Fetch only the recipe names
+          .select('recipe_id')
           .eq('user_id', user.id);
 
-        if (fetchError) {
-          setError('Error fetching favorite recipes');
+        if (fetchError) throw fetchError;
+
+        if (!favoriteIds || favoriteIds.length === 0) {
+          setFavoriteRecipes([]);
           return;
         }
 
-        // Fetch images for each recipe from the API
-        const recipesWithImages = await Promise.all(
-          favorites.map(async (recipe) => {
-            try {
+        // Use the reliable "Get Recipe Information" endpoint for each ID
+        const recipeDetailPromises = favoriteIds.map(async (fav) => {
+          const response = await fetch(
+            `https://api.spoonacular.com/recipes/${fav.recipe_id}/information?apiKey=${process.env.REACT_APP_API_KEY}`
+          );
+          if (!response.ok) {
+            console.error(`Failed to fetch details for ID ${fav.recipe_id}`);
+            return null;
+          }
+          return response.json();
+        });
 
-              console.log('API Key:', process.env.REACT_APP_API_KEY);
+        const allRecipeDetails = await Promise.all(recipeDetailPromises);
+        setFavoriteRecipes(allRecipeDetails.filter(recipe => recipe !== null));
 
-              const response = await fetch(
-                `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&query=${recipe.recipe_name}`
-              );
-
-              if (!response.ok) {
-                throw new Error('Failed to fetch recipe details');
-              }
-
-              const data = await response.json();
-              const firstResult = data.results?.[0] || {}; // Get the first result
-              return {
-                ...recipe,
-                image: firstResult.image || '', // Add image URL or fallback
-              };
-            } catch {
-              return { ...recipe, image: '' }; // Fallback if API call fails
-            }
-          })
-        );
-
-        setFavoriteRecipes(recipesWithImages);
-      } catch (error) {
-        setError('An unexpected error occurred');
+      } catch (err) {
+        setError(err.message);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFavoritesWithImages();
+    fetchAllFavorites();
   }, []);
 
   if (loading) {
@@ -84,13 +64,15 @@ function Favorites() {
   return (
     <Grid>
       {favoriteRecipes.length > 0 ? (
-        favoriteRecipes.map((item, index) => (
-          <Card key={index}>
-            <Link to={'/recipe/' + item.recipe_name}>
-              <img src={item.image || '/default-recipe.jpg'} alt={item.recipe_name} />
-              <h4>{item.recipe_name}</h4>
-            </Link>
-          </Card>
+        favoriteRecipes.map((item) => (
+          item && (
+            <Card key={item.id}>
+              <Link to={'/recipe/' + item.id}>
+                <img src={item.image} alt={item.title} />
+                <h4>{item.title}</h4>
+              </Link>
+            </Card>
+          )
         ))
       ) : (
         <p>No saved recipes yet.</p>
@@ -105,11 +87,9 @@ const Grid = styled.div`
   grid-gap: 2rem;
   padding-left: 9rem;
   padding-right: 1.5rem;
-
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
-
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
   }
@@ -118,18 +98,15 @@ const Grid = styled.div`
 const Card = styled.div`
   overflow: hidden;
   border-radius: 1rem;
-
   img {
     width: 100%;
     height: auto;
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
   }
-
   a {
     text-decoration: none;
   }
-
   h4 {
     font-size: 1rem;
     text-align: center;

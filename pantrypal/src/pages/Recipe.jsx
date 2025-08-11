@@ -44,6 +44,7 @@ function Recipe() {
           // Log the data being added
     console.log("Adding new row to favorited_recipe:", {
       user_id: userId,
+      recipe_id: details.id,
       recipe_name: details.title,
       description: details.summary,
     });
@@ -51,9 +52,10 @@ function Recipe() {
     // Insert the new row into the table
     const { error: dbError } = await supabase
       .from('favorited_recipe')
-      .insert([ // Insert expects an array of rows
+      .upsert([ // Insert expects an array of rows
         {
           user_id: userId,
+          recipe_id: details.id,
           recipe_name: details.title,
           description: details.summary,
         },
