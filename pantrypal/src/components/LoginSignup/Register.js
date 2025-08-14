@@ -98,7 +98,7 @@ const Register = () => {
     
             // Step 2: Insert the user's details into the 'User' table
             const { error: dbError } = await supabase
-                .from('User')
+                .from('pantrypal_users')
                 .insert({ id: userId, email: email, name: fullName });
     
             if (dbError) {
