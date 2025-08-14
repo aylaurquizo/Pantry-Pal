@@ -3,47 +3,36 @@ import { supabase } from '../supabaseClient'; // Import the Supabase client
 
 function Profile() {
   const [userName, setUserName] = useState('');
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserName = async () => {
       try {
         // Get the authenticated user
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError) {
-          setError('Unable to fetch user');
-          return;
-        }
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Unable to fetch user');
 
         const { data, error: fetchError } = await supabase
-          .from('User')
+          .from('pantrypal_users')
           .select('name')
-          .eq('id', user.id)
-          .single(); 
+          .eq('id', user.id);
+
+          console.log(data);
 
         if (fetchError) {
           setError('Error fetching user data');
+        } else if (data && data.length > 0) {
+          setUserName(data[0].name);
         } else {
-          setUserName(data.name);
+          setError('User not found.')
         }
       } catch (error) {
         setError('An unexpected error occurred');
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchUserName();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (error) {
     return <div>{error}</div>;
@@ -52,6 +41,7 @@ function Profile() {
   return (
     <div>
       <h1>Hello, {userName || 'User'}!</h1>
+      
     </div>
   );
 }

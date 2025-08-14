@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
@@ -7,73 +7,101 @@ function Recipe() {
   let params = useParams();
   const [details, setDetails] = useState({});
   const [activeTab, setActiveTab] = useState('instructions');
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const fetchDetails = async () => {
+  useEffect(() => {
+    const getUserData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUserData();
+  }, []);
+
+  const checkFavoriteStatus = useCallback(async (recipeId) => {
+    if (!user || !recipeId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('favorited_recipe')
+        .select('recipe_id')
+        .match({ user_id: user.id, recipe_id: recipeId })
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+      
+      setIsFavorited(!!data);
+
+    } catch (error) {
+      console.error('Error checking favorite status:', error.message);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (details.id) {
+      checkFavoriteStatus(details.id);
+    }
+  }, [details.id, checkFavoriteStatus]);
+
+  const fetchDetails = useCallback(async () => {
     try {
       const response = await fetch(
         `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_API_KEY}`
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch recipe details");
-      }
-
+      if (!response.ok) throw new Error("Failed to fetch recipe details");
       const detailData = await response.json();
       setDetails(detailData);
     } catch (error) {
       console.error("Error fetching recipe details:", error);
     }
-  };
-
-  const addToFavorites = async () => {
-    try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError) {
-        console.error('Unable to fetch user:', userError.message);
-        return;
-      }
-
-      const userId = user.id;
-
-      console.log("Here is the users id:", userId);
-
-          // Log the data being added
-    console.log("Adding new row to favorited_recipe:", {
-      user_id: userId,
-      recipe_id: details.id,
-      recipe_name: details.title,
-      description: details.summary,
-    });
-
-    // Insert the new row into the table
-    const { error: dbError } = await supabase
-      .from('favorited_recipe')
-      .upsert([ // Insert expects an array of rows
-        {
-          user_id: userId,
-          recipe_id: details.id,
-          recipe_name: details.title,
-          description: details.summary,
-        },
-      ]);
-      if (dbError) {
-        console.error("Error adding to favorites:", dbError.message);
-        return;
-      }
-
-      alert('Recipe added to favorites!');
-    } catch (error) {
-      console.error("Unexpected error adding to favorites:", error);
-    }
-  };
+  }, [params.name]);
 
   useEffect(() => {
     fetchDetails();
-  }, [params.name]);
+  }, [fetchDetails]);
+
+  const addToFavorites = async () => {
+    if (!user) {
+        alert("You must be logged in to save recipes.");
+        return;
+    }
+    try {
+      const { error } = await supabase
+        .from('favorited_recipe')
+        .upsert([{
+            user_id: user.id,
+            recipe_id: details.id,
+            recipe_name: details.title,
+            description: details.summary,
+        }]);
+
+      if (error) throw error;
+      
+      setIsFavorited(true);
+      alert('Recipe added to favorites!');
+    } catch (error) {
+      console.error("Error adding to favorites:", error.message);
+    }
+  };
+
+  const removeFromFavorites = async () => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('favorited_recipe')
+        .delete()
+        .match({ user_id: user.id, recipe_id: details.id });
+
+      if (error) throw error;
+      
+      setIsFavorited(false);
+      alert('Recipe removed from favorites!');
+    } catch (error) {
+      console.error("Error removing from favorites:", error.message);
+    }
+  };
 
   return (
     <Container>
@@ -82,11 +110,17 @@ function Recipe() {
           <h2>
             {details.title}
           </h2>
-          <img src={details.image} alt="" />
+          <img src={details.image} alt={details.title} />
         </div>
-        <Button className="addToFavorite" onClick={addToFavorites}>
-          Add to Saved Recipes
-        </Button>
+        {isFavorited ? (
+          <Button className="removeFromFavorite" onClick={removeFromFavorites}>
+            Remove from Favorites
+          </Button>
+        ) : (
+          <Button className="addToFavorite" onClick={addToFavorites}>
+            Add to Favorites
+          </Button>
+        )}
         <Info>
           <Button className={activeTab === 'instructions' ? 'active' : ''} onClick={() => setActiveTab('instructions')}>
             Instructions
@@ -102,7 +136,7 @@ function Recipe() {
           )}
           {activeTab === 'ingredients' && (
             <ul>
-            {details.extendedIngredients.map((ingredient) => <li className='ingredients-tab' key={ingredient.id}>{ingredient.original}</li>)}
+            {details.extendedIngredients?.map((ingredient) => <li className='ingredients-tab' key={ingredient.id}>{ingredient.original}</li>)}
           </ul>
           )}
         </Info>
@@ -116,7 +150,7 @@ const DetailWrapper = styled.div`
   margin-bottom: 5rem;
   margin-left: 5rem;
   display: flex;
-  flex-direction: column; /* Stack items vertically on smaller screens */
+  flex-direction: column;
   align-items: center;
 
   @media (min-width: 768px) {
@@ -127,7 +161,7 @@ const DetailWrapper = styled.div`
 
   h2 {
     margin-bottom: 1rem;
-    font-size: 2rem; /* Larger font size for the title */
+    font-size: 2rem;
     text-align: center;
 
     @media (min-width: 768px) {
@@ -136,7 +170,7 @@ const DetailWrapper = styled.div`
   }
 
   div {
-    flex: 1; /* Ensure the title and image section takes up more space */
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -160,7 +194,7 @@ const DetailWrapper = styled.div`
   }
 
   img {
-    max-width: 90%; /* Allow the image to use more of the available space */
+    max-width: 90%;
     height: auto;
     border-radius: 8px;
     margin-top: 1rem;
@@ -172,18 +206,18 @@ const DetailWrapper = styled.div`
 `;
 
 const Info = styled.div`
-  flex: 1; /* Ensure the buttons and ingredients section also take up space */
+  flex: 1;
   margin-top: 2rem;
   text-align: center;
   display: flex;
-  flex-direction: column; /* Stack buttons by default */
+  flex-direction: column;
   align-items: center;
 
   @media (min-width: 768px) {
-    flex-direction: row; /* Arrange buttons side-by-side on larger screens */
+    flex-direction: row;
     justify-content: flex-start;
     text-align: left;
-    gap: 1rem; /* Add spacing between buttons */
+    gap: 1rem;
   }
 `;
 
@@ -192,27 +226,31 @@ const Button = styled.button`
   color: rgba(109, 80, 53);
   background: white;
   border: 2px solid rgba(109, 80, 53);
-  margin: 0.5rem 0; /* Spacing between buttons when stacked */
+  margin: 0.5rem 0;
   font-size: 0.9rem;
   font-weight: 600;
+  cursor: pointer;
+
+  &.active {
+    background: rgba(109, 80, 53);
+    color: white;
+  }
 
   @media (min-width: 768px) {
-    margin: 0; /* Remove vertical margin for side-by-side layout */
+    margin: 0;
   }
 
   @media (max-width: 480px) {
-    width: 100%; /* Make the button full-width on smaller screens */
-    padding: 0.7rem; /* Slightly smaller padding for smaller screens */
-    font-size: 0.9rem; /* Reduce font size slightly for small screens */
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 0.9rem;
   }
 `;
 
-
 const Container = styled.div`
   width: 90%;
-  margin: 0 auto; /* Center the entire container */
+  margin: 0 auto;
   padding: 1rem;
 `;
-
 
 export default Recipe;
