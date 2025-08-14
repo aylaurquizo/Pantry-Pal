@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient'; // Import the Supabase client
+import Checkbox from "../components/DietaryPreferences/CheckBox";
 
 function Profile() {
   const [userName, setUserName] = useState('');
   const [error, setError] = useState(null);
+  const [Filters, setFilters] = useState({
+    diets: []
+  })
 
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        // Get the authenticated user
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('Unable to fetch user');
 
@@ -38,10 +41,24 @@ function Profile() {
     return <div>{error}</div>;
   }
 
+  const handleFilters = (filters, category) => {
+    console.log(filters)
+
+    const newFilters = { ...Filters }
+
+    newFilters[category] = filters
+
+    
+    setFilters(newFilters)
+  }
+
   return (
     <div>
       <h1>Hello, {userName || 'User'}!</h1>
-      
+      <h1>Your Dietary Preferences:</h1>
+      <Checkbox 
+        handleFilters={filters => handleFilters(filters, "diets")}
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import Pages from "./pages/Pages"; // Assuming this handles routing within the a
 import Search from "./components/Search";
 import styled from "styled-components";
 import ImageFile from "./components/Assets/logo.png";
+import 'antd/dist/reset.css';
 import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
