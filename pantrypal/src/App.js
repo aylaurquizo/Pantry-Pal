@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { FilterProvider } from "./contexts/FilterContext";
 
 function App() {
   // State to track if the user is signed in
@@ -20,17 +21,15 @@ function App() {
   return (
     <Router>
       {isSignedIn ? (
+        <FilterProvider>
         <div className="App">
           <div className="headersearchbar">
-        {/* Logo and Title on the same line */}
         <Nav>
           <Logo to="/">
             <StyledImage />
           </Logo>
           <Title>PantryPal</Title>
         </Nav>
-
-        {/* Search bar below the title */}
         <SearchWrapper>
           <Search />
         </SearchWrapper>
@@ -40,6 +39,7 @@ function App() {
       </SidebarWrapper>
       <Pages />
         </div>
+        </FilterProvider>
       ) : (
         <main className="App">
           <div className="header">

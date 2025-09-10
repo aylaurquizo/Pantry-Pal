@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient'; // Import the Supabase client
-import Checkbox from "../components/DietaryPreferences/CheckBox";
+import { supabase } from '../supabaseClient'; 
+import Checkbox, { dietOptions } from "../components/DietaryPreferences/CheckBox";
+import { useFilters } from '../contexts/FilterContext';
 
 function Profile() {
   const [userName, setUserName] = useState('');
   const [error, setError] = useState(null);
-  const [Filters, setFilters] = useState({
-    diets: []
-  })
+  const { updateFilters } = useFilters();
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -41,15 +40,25 @@ function Profile() {
     return <div>{error}</div>;
   }
 
-  const handleFilters = (filters, category) => {
-    console.log(filters)
 
-    const newFilters = { ...Filters }
+  const handleFilters = (selectedIds) => {
+    const newFilters = {
+      diets: [],
+      intolerances: []
+    };
 
-    newFilters[category] = filters
+    selectedIds.forEach(id => {
+      const option = dietOptions.find(opt => opt._id == id);
+      if (option) {
+        if(option.type === 'diet') {
+          newFilters.diets.push(option.paramName);
+        } else if (option.type === 'intolerance') {
+          newFilters.intolerances.push(option.paramName);
+        }
+      }
+    });
 
-    
-    setFilters(newFilters)
+    updateFilters(newFilters);
   }
 
   return (
@@ -57,7 +66,7 @@ function Profile() {
       <h1>Hello, {userName || 'User'}!</h1>
       <h1>Your Dietary Preferences:</h1>
       <Checkbox 
-        handleFilters={filters => handleFilters(filters, "diets")}
+        handleFilters={handleFilters}
       />
     </div>
   );

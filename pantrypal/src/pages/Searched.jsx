@@ -1,29 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import styled from "styled-components";
+import { useFilters } from "../contexts/FilterContext";
 
 function Searched() {
   const [searchedRecipes, setSearchedRecipes] = useState([]);
   const [error, setError] = useState(null); 
   let params = useParams();
+  const { filters } = useFilters();
 
-  const getSearched = async (name) => {
+  const getSearched = async (name, currentFilters) => {
     try {
-      const response = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&query=${name}`
-      );
+      let apiUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&query=${name}`;
+
+      if (currentFilters.diets.length > 0) {
+        apiUrl += `&diet=${currentFilters.diets.join(',')}`;
+      }
+
+      if (currentFilters.intolerances.length > 0) {
+        apiUrl += `&intolerances=${currentFilters.intolerances.join(',')}`;
+      }
+
+      const response = await fetch(apiUrl);
 
       if (!response.ok) {
         throw new Error("Failed to fetch recipes");
       }
 
       const data = await response.json();
+      setSearchedRecipes(data.results || []);
 
-      if (data.results) {
-        setSearchedRecipes(data.results);
-      } else {
-        setSearchedRecipes([]); 
-      }
     } catch (error) {
       console.error(error);
       setError("An error occurred while fetching recipes");
@@ -32,9 +38,9 @@ function Searched() {
 
   useEffect(() => {
     if (params.search) {
-      getSearched(params.search);
+      getSearched(params.search, filters);
     }
-  }, [params.search]);
+  }, [params.search, filters]);
 
   if (error) {
     return <div>{error}</div>;
