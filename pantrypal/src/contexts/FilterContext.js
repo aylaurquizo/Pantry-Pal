@@ -46,7 +46,7 @@ export const FilterProvider = ({ children }) => {
             .from('user_preferences')
             .upsert({
                 user_id: user.id,
-                selected_filters_ids: newIds
+                selected_filter_ids: newIds
             }, { onConflict: 'user_id' });
 
         if(error) {

@@ -2,23 +2,38 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import styled from "styled-components";
 import { useFilters } from "../contexts/FilterContext";
+import { dietOptions } from "../components/DietaryPreferences/CheckBox";
 
 function Searched() {
   const [searchedRecipes, setSearchedRecipes] = useState([]);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
   let params = useParams();
-  const { filters } = useFilters();
+  const { selectedIds } = useFilters();
 
-  const getSearched = async (name, currentFilters) => {
+  const getSearched = async (name, currentIds) => {
     try {
+      const diets = [];
+      const intolerances = [];
+
+      currentIds.array.forEach(id => {
+        const option = dietOptions.find(opt => opt._id === id);
+        if (option) {
+          if (option.type === 'diet') {
+            diets.push(option.paramName);
+          } else if (option.type === 'intolerance') {
+            intolerances.push(option.paramName);
+          }
+        }
+      });
+
       let apiUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&query=${name}`;
 
-      if (currentFilters.diets.length > 0) {
-        apiUrl += `&diet=${currentFilters.diets.join(',')}`;
+      if (diets.length > 0) {
+        apiUrl += `&diet=${diets.join(',')}`;
       }
 
-      if (currentFilters.intolerances.length > 0) {
-        apiUrl += `&intolerances=${currentFilters.intolerances.join(',')}`;
+      if (intolerances.length > 0) {
+        apiUrl += `&intolerances=${intolerances.join(',')}`;
       }
 
       const response = await fetch(apiUrl);
@@ -29,7 +44,6 @@ function Searched() {
 
       const data = await response.json();
       setSearchedRecipes(data.results || []);
-
     } catch (error) {
       console.error(error);
       setError("An error occurred while fetching recipes");
@@ -38,12 +52,12 @@ function Searched() {
 
   useEffect(() => {
     if (params.search) {
-      getSearched(params.search, filters);
+      getSearched(params.search, selectedIds);
     }
-  }, [params.search, filters]);
+  }, [params.search, selectedIds]);
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error}</div>
   }
 
   return (
