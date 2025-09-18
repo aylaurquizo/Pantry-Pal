@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Checkbox, Collapse } from 'antd';
+import styled from 'styled-components';
 
 const {Panel} = Collapse
 
@@ -16,6 +17,25 @@ export const dietOptions = [
     { "_id": 10, "name": "Soy-Free", "type": "intolerance", "paramName": "soy" },
     { "_id": 11, "name": "Egg-Free", "type": "intolerance", "paramName": "egg" }
 ];
+
+const StyledCheckbox = styled(Checkbox)`
+  &.ant-checkbox-wrapper {
+    margin-bottom: 8px; 
+    &:hover .ant-checkbox-inner {
+      border-color: #1a73e8; 
+    }
+  }
+
+  .ant-checkbox-inner {
+    border-radius: 10px;
+    border-width: 2px;
+  }
+  
+  & .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #1a73e8; 
+    border-color: #1a73e8;
+  }
+`;
 
 function CheckBox(props) {
 
@@ -38,11 +58,11 @@ function CheckBox(props) {
 
     const renderCheckboxLists = () => dietOptions.map((value, index) => (
         <React.Fragment key={index}>
-            <Checkbox
+            <StyledCheckbox
                 onChange={()=>handleToggle(value._id)}
                 type="checkbox"
                 checked = {Checked.indexOf(value._id) !== -1}
-            > {value.name}</Checkbox>
+            > {value.name}</StyledCheckbox>
         </React.Fragment>
     ));
 
