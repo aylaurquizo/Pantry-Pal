@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Checkbox, Collapse } from 'antd';
 import styled from 'styled-components';
-
-const {Panel} = Collapse
+import { useFilters } from '../../contexts/FilterContext';
 
 export const dietOptions = [
     { "_id": 1, "name": "Vegetarian", "type": "diet", "paramName": "vegetarian" },
@@ -37,31 +36,31 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `;
 
+const {Panel} = Collapse
+
 function CheckBox(props) {
 
-    const [Checked, setChecked] = useState([])
+    const { selectedIds, updateFilters } = useFilters();
 
-    const handleToggle = (value) => {
+    const handleToggle = (id) => {
 
-        const currentIndex = Checked.indexOf(value);
-        const newChecked = [...Checked];
+        const currentIndex = selectedIds.indexOf(id);
+        const newCheckedIds = [...selectedIds];
 
         if(currentIndex === -1){
-            newChecked.push(value)
+            newCheckedIds.push(id)
         } else {
-            newChecked.splice(currentIndex, 1)
+            newCheckedIds.splice(currentIndex, 1)
         }
 
-        setChecked(newChecked)
-        props.handleFilters(newChecked);
+        updateFilters(newCheckedIds);
     }
 
-    const renderCheckboxLists = () => dietOptions.map((value, index) => (
-        <React.Fragment key={index}>
+    const renderCheckboxLists = () => dietOptions.map((value) => (
+        <React.Fragment key={value._id}>
             <StyledCheckbox
                 onChange={()=>handleToggle(value._id)}
-                type="checkbox"
-                checked = {Checked.indexOf(value._id) !== -1}
+                checked = {selectedIds.includes(value._id)}
             > {value.name}</StyledCheckbox>
         </React.Fragment>
     ));
