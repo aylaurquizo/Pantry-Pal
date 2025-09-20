@@ -15,7 +15,7 @@ function Searched() {
       const diets = [];
       const intolerances = [];
 
-      currentIds.array.forEach(id => {
+      currentIds.forEach(id => {
         const option = dietOptions.find(opt => opt._id === id);
         if (option) {
           if (option.type === 'diet') {
