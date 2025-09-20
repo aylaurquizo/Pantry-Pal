@@ -1,60 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Import useEffect
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { supabase } from "./supabaseClient"; // Make sure supabase is imported
 import Sidebar from "./components/Sidebar";
 import Register from "./components/LoginSignup/Register";
 import Login from "./components/LoginSignup/Login";
-import Pages from "./pages/Pages"; // Assuming this handles routing within the authenticated layout.
+import Pages from "./pages/Pages";
 import Search from "./components/Search";
 import styled from "styled-components";
 import ImageFile from "./components/Assets/logo.png";
 import 'antd/dist/reset.css';
 import { Link } from "react-router-dom";
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import { FilterProvider } from "./contexts/FilterContext";
 
 function App() {
-  // State to track if the user is signed in
-  const [isSignedIn, setIsSignedIn] = useState(false); // Replace this with your auth logic.
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsSignedIn(!!session); 
+    };
+    getSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsSignedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <Router>
       {isSignedIn ? (
         <FilterProvider>
-        <div className="App">
-          <div className="headersearchbar">
-        <Nav>
-          <Logo to="/">
-            <StyledImage />
-          </Logo>
-          <Title>PantryPal</Title>
-        </Nav>
-        <SearchWrapper>
-          <Search />
-        </SearchWrapper>
-      </div>
-      <SidebarWrapper>
-      <Sidebar />
-      </SidebarWrapper>
-      <Pages />
-        </div>
+          <div className="App">
+            <div className="headersearchbar">
+              <Nav>
+                <Logo to="/">
+                  <StyledImage />
+                </Logo>
+                <Title>PantryPal</Title>
+              </Nav>
+              <SearchWrapper>
+                <Search />
+              </SearchWrapper>
+            </div>
+            <SidebarWrapper>
+              <Sidebar />
+            </SidebarWrapper>
+            <Pages />
+          </div>
         </FilterProvider>
       ) : (
         <main className="App">
           <div className="header">
-        {/* Logo and Title on the same line */}
-        <Nav>
-          <Logo to="/">
-            <StyledImage />
-          </Logo>
-          <Title>PantryPal</Title>
-        </Nav>
-      </div>
+            <Nav>
+              <Logo to="/">
+                <StyledImage />
+              </Logo>
+              <Title>PantryPal</Title>
+            </Nav>
+          </div>
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login setIsSignedIn={setIsSignedIn} />} />
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </main>
       )}
